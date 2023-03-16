@@ -64,7 +64,7 @@ def generate_random_data(rows: int) -> List[dict]:
             'file': faker.file_name(),
             'date': faker.date(),
         }
-        for _ in range(rows)
+        for _ in range(rows-1)
     ]
 
 
