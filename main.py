@@ -128,11 +128,13 @@ def split_excel_file(file_path: str, max_rows_per_file: int):
     """
     Split excel file into multiple files which won't exceed row limit
     """
+    splitted_files_count = 0
     click.echo(click.style(f"[*] Splitting {file_path} into multiple files", fg='yellow'))
     with ExcelSplitter(file_path, max_rows_per_file) as splitter:
         splitter.split()
-    click.echo(click.style(f"[+] Done splitting {file_path} into multiple files", fg='green'))
-    click.echo(click.style(f"[*] Check {OUTPUT_PATH} for splitted files", fg='yellow'))
+        splitted_files_count = splitter.file_suffix_num
+    click.echo(click.style(f"[+] Done splitting {file_path} into {splitted_files_count} files", fg='green'))
+    click.echo(click.style(f"[*] Check {OUTPUT_DIR} for splitted excel files", fg='yellow'))
 
 
 if __name__ == '__main__':
