@@ -101,18 +101,18 @@ def cli():
         OUTPUT_DIR.mkdir()
 
 
-@cli.command()
-@click.option('--file_name', '-f', help='File name', required=True)
+@cli.command("gen", no_args_is_help=True)
+@click.option('--name', '-n', help="A name for the generated excel file. Ex: test", required=True)
 @click.option('--rows', '-r', help='Number of rows', default=2000000)
-def gen(file_name: str, rows: int):
+def gen(name: str, rows: int):
     """
     Generate excel file with random data
     """
-    gen_excel(file_name, rows)
+    gen_excel(name, rows)
 
 
-@cli.command("check")
-@click.option('--file_path', '-f', help='File path', required=True)
+@cli.command("check", no_args_is_help=True)
+@click.argument('file_path', type=click.Path(exists=True), required=True)
 def check_excel_length(file_path: Path):
     """
     Get excel file's row count
@@ -121,9 +121,9 @@ def check_excel_length(file_path: Path):
     click.echo(click.style(f"[*] {file_path} has {result} rows", fg='yellow'))
 
 
-@cli.command("split")
-@click.option('--file_path', '-f', help='File path', required=True)
-@click.option('--max_rows_per_file', '-m', help='Max rows per file', default=1000000)
+@cli.command("split", no_args_is_help=True)
+@click.argument('file_path', type=click.Path(exists=True), required=True)
+@click.option('--max_rows_per_file', help="Maximum rows per file", default=1000000)
 def split_excel_file(file_path: str, max_rows_per_file: int):
     """
     Split excel file into multiple files which won't exceed row limit
