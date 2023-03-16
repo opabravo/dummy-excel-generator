@@ -28,8 +28,10 @@ def gen_excel(file_name: str, rows: int = 1000):
     """
     Function to generate excel file with random data
     """
+    file_name = f'{file_name}.csv'
+    click.echo(click.style(f"[*] Generating {file_name} with {rows} rows", fg='yellow'))
     rnd_data = generate_random_data(rows)
-    with open(OUTPUT_PATH / f'{file_name}.csv', 'w', encoding='utf-8', newline='') as f:
+    with open(OUTPUT_PATH / file_name, 'w', encoding='utf-8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=rnd_data[0].keys())
         writer.writeheader()
         writer.writerows(rnd_data)
