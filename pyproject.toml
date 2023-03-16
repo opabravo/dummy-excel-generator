@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "dummy-excel-generator"
+name = "dummy-excel-tools"
 version = "0.1.0"
-description = "Generate Dummy excel file with fake data"
+description = "Tools with generating Dummy excel file with fake data for testing purposes"
 authors = ["opabravo <21262207+opabravo@users.noreply.github.com>"]
 readme = "README.md"
 

@@ -1,4 +1,4 @@
-# dummy-excel-generator
+# dummy-excel-tools
 
 This is a POC for generating dummy Excel files with fake data.
 
@@ -20,8 +20,8 @@ In our case, we were testing against **OPSWAT**'s CDR (Content Disarm and Recons
 
 ```bash
 # Clone the repo
-git clone https://github.com/opabravo/dummy-excel-generator
-cd dummy-excel-generator
+git clone https://github.com/opabravo/dummy-excel-tools
+cd dummy-excel-tools
 
 # Install required python packages via poetry
 poetry install
@@ -42,7 +42,7 @@ Command line help:
 ```console
 Usage: main.py [OPTIONS] COMMAND [ARGS]...
 
-  Dummy Excel file generator CLI
+  Dummy Excel file tools CLI
 
 Options:
   --help  Show this message and exit.
