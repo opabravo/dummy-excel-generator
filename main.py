@@ -1,10 +1,9 @@
 """
-Python script to generate random excel file
+Python script to generate excel file with fake data
 """
 import csv
 import click
 from faker import Faker
-from typing import List
 from pathlib import Path
 from typing import IO, Generator
 
@@ -12,7 +11,7 @@ OUTPUT_DIR = Path(__file__).parent / 'output'
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'], show_default=True)
 
 
-class ExcelSplitter():
+class ExcelSplitter:
     def __init__(self, input_file_path: str, max_rows: int = 100000):
         self.input_file_path: str = input_file_path
         self.max_rows: int = max_rows
@@ -92,7 +91,7 @@ def get_excel_row_length(file_path: Path) -> int:
         return sum(1 for _ in reader)
 
 
-@click.group(context_settings=dict(show_default=True))
+@click.group(context_settings=CONTEXT_SETTINGS)
 def cli():
     """
     Dummy Excel file generator CLI
