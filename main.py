@@ -74,7 +74,7 @@ def check_excel_length(file_path: Path):
     Get excel file's row count
     """
     result = click.style(get_excel_row_length(file_path), fg='yellow')
-    click.echo(f"[+] Excel file: {file_path} has {result} rows")
+    click.echo(click.style(f"[*] {file_path} has {result} rows", fg='yellow'))
 
 
 if __name__ == '__main__':
