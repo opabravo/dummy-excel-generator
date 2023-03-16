@@ -24,7 +24,7 @@ def generate_random_data(rows: int) -> List[dict]:
     ]
 
 
-def gen_excel(file_name: str, rows: int = 1000):
+def gen_excel(file_name: str, rows: int):
     """
     Function to generate excel file with random data
     """
@@ -59,7 +59,7 @@ def cli():
 
 @cli.command()
 @click.option('--file_name', '-f', help='File name', required=True)
-@click.option('--rows', '-r', help='Number of rows', default=1000)
+@click.option('--rows', '-r', help='Number of rows', default=2000000)
 def gen(file_name: str, rows: int):
     """
     Generate excel file with random data
