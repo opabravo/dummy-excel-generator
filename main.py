@@ -6,7 +6,7 @@ import click
 from faker import Faker
 from typing import List
 from pathlib import Path
-from io import TextIOWrapper
+from typing import IO
 
 OUTPUT_PATH = Path(__file__).parent / 'output'
 
@@ -15,7 +15,7 @@ class ExcelSplitter():
     def __init__(self, input_file_path: str, max_rows: int = 100000):
         self.input_file_path: str = input_file_path
         self.max_rows: int = max_rows
-        self.file_handler: TextIOWrapper = None
+        self.file_handler: IO = None
         self.writer: csv.writer = None
         self.row_count = 0
         self.file_suffix_num = 0
