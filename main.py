@@ -6,7 +6,7 @@ import click
 from faker import Faker
 from typing import List
 from pathlib import Path
-from typing import IO
+from typing import IO, Generator
 
 OUTPUT_DIR = Path(__file__).parent / 'output'
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'], show_default=True)
@@ -55,18 +55,16 @@ class ExcelSplitter():
                     row_count = 0
 
 
-def generate_random_data(rows: int) -> List[dict]:
+def generate_random_data(rows: int) -> Generator[dict, None, None]:
     """
     Generate random data
     """
     faker = Faker()
-    return [
-        {
+    for _ in range(rows-1):
+        yield {
             'file': faker.file_name(),
             'date': faker.date(),
         }
-        for _ in range(rows-1)
-    ]
 
 
 def gen_excel(file_name: str, rows: int):
@@ -76,11 +74,13 @@ def gen_excel(file_name: str, rows: int):
     output_path = OUTPUT_DIR / f'{file_name}.csv'
     click.echo(click.style(f"[*] Generating {output_path} with {rows} rows", fg='yellow'))
     rnd_data = generate_random_data(rows)
-    with open(OUTPUT_PATH / file_name, 'w', encoding='utf-8', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=rnd_data[0].keys())
+    with open(output_path, 'w', encoding='utf-8', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=['file', 'date'])
         writer.writeheader()
-        writer.writerows(rnd_data)
-    click.echo(click.style(f"[+] Generated {file_name} with {rows} rows", fg='green'))
+        for row in rnd_data:
+            writer.writerow(row)
+
+    click.echo(click.style(f"[+] Generated {output_path} with {rows} rows", fg='green'))
 
 
 def get_excel_row_length(file_path: Path) -> int:
