@@ -8,7 +8,8 @@ from typing import List
 from pathlib import Path
 from typing import IO
 
-OUTPUT_PATH = Path(__file__).parent / 'output'
+OUTPUT_DIR = Path(__file__).parent / 'output'
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'], show_default=True)
 
 
 class ExcelSplitter():
@@ -41,7 +42,7 @@ class ExcelSplitter():
                 # If the counter is equal to 0, create a new output file
                 if row_count == 0:
                     file_suffix_num += 1
-                    output_file_path = OUTPUT_PATH / f"{file_name_prefix}_{file_suffix_num}.csv"
+                    output_file_path = OUTPUT_DIR / f"{file_name_prefix}_{file_suffix_num}.csv"
                     self.file_handler = open(output_file_path, "w", newline='')
                     self.writer = csv.writer(self.file_handler)
 
@@ -72,8 +73,8 @@ def gen_excel(file_name: str, rows: int):
     """
     Function to generate excel file with random data
     """
-    file_name = f'{file_name}.csv'
-    click.echo(click.style(f"[*] Generating {file_name} with {rows} rows", fg='yellow'))
+    output_path = OUTPUT_DIR / f'{file_name}.csv'
+    click.echo(click.style(f"[*] Generating {output_path} with {rows} rows", fg='yellow'))
     rnd_data = generate_random_data(rows)
     with open(OUTPUT_PATH / file_name, 'w', encoding='utf-8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=rnd_data[0].keys())
@@ -96,9 +97,9 @@ def cli():
     """
     Dummy Excel file generator CLI
     """
-    # Check if output folder exists
-    if not OUTPUT_PATH.exists():
-        OUTPUT_PATH.mkdir()
+    # Make sure output folder exists
+    if not OUTPUT_DIR.exists():
+        OUTPUT_DIR.mkdir()
 
 
 @cli.command()
