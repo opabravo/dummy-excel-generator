@@ -21,9 +21,6 @@ In our case, we were testing against **OPSWAT**'s CDR (Content Disarm and Recons
 ```bash
 # Install required python packages via poetry
 poetry install
-
-# Activate virtual environment
-poetry shell
 ```
 
 ## Usage
@@ -50,3 +47,8 @@ Commands:
   check  Get excel file's row count
   gen    Generate excel file with random data
 ```
+
+## License
+
+[MIT](LICENSE)
+
