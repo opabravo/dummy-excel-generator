@@ -46,6 +46,8 @@ Options:
 Commands:
   check  Get excel file's row count
   gen    Generate excel file with random data
+  split  Split excel file into multiple files which won't exceed row limit
+
 ```
 
 ## License

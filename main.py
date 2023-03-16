@@ -6,8 +6,52 @@ import click
 from faker import Faker
 from typing import List
 from pathlib import Path
+from io import TextIOWrapper
 
 OUTPUT_PATH = Path(__file__).parent / 'output'
+
+
+class ExcelSplitter():
+    def __init__(self, input_file_path: str, max_rows: int = 100000):
+        self.input_file_path: str = input_file_path
+        self.max_rows: int = max_rows
+        self.file_handler: TextIOWrapper = None
+        self.writer: csv.writer = None
+        self.row_count = 0
+        self.file_suffix_num = 0
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.file_handler.close()
+
+    def split(self):
+        """
+        Split excel file into multiple files
+        """
+        file_name_prefix = self.input_file_path.split('.')[0]
+
+        with open(self.input_file_path, "r") as input_file:
+            reader = csv.reader(input_file)
+            row_count: int = 0
+            file_suffix_num: int = 0
+
+            for row in reader:
+                # If the counter is equal to 0, create a new output file
+                if row_count == 0:
+                    file_suffix_num += 1
+                    output_file_path = OUTPUT_PATH / f"{file_name_prefix}_{file_suffix_num}.csv"
+                    self.file_handler = open(output_file_path, "w", newline='')
+                    self.writer = csv.writer(self.file_handler)
+
+                # If the counter is not equal to 0, write the row to the existing output file
+                self.writer.writerow(row)
+                row_count += 1
+
+                if row_count == self.max_rows:
+                    self.file_handler.close()
+                    row_count = 0
 
 
 def generate_random_data(rows: int) -> List[dict]:
@@ -75,6 +119,20 @@ def check_excel_length(file_path: Path):
     """
     result = click.style(get_excel_row_length(file_path), fg='yellow')
     click.echo(click.style(f"[*] {file_path} has {result} rows", fg='yellow'))
+
+
+@cli.command("split")
+@click.option('--file_path', '-f', help='File path', required=True)
+@click.option('--max_rows_per_file', '-m', help='Max rows per file', default=100000)
+def split_excel_file(file_path: str, max_rows_per_file: int):
+    """
+    Split excel file into multiple files which won't exceed row limit
+    """
+    click.echo(click.style(f"[*] Splitting {file_path} into multiple files", fg='yellow'))
+    with ExcelSplitter(file_path, max_rows_per_file) as splitter:
+        splitter.split()
+    click.echo(click.style(f"[+] Done splitting {file_path} into multiple files", fg='green'))
+    click.echo(click.style(f"[*] Check {OUTPUT_PATH} for splitted files", fg='yellow'))
 
 
 if __name__ == '__main__':
