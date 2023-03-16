@@ -19,6 +19,10 @@ In our case, we were testing against **OPSWAT**'s CDR (Content Disarm and Recons
 - [Poetry](https://python-poetry.org/docs/#installation)
 
 ```bash
+# Clone the repo
+git clone https://github.com/opabravo/dummy-excel-generator
+cd dummy-excel-generator
+
 # Install required python packages via poetry
 poetry install
 ```
