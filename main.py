@@ -123,7 +123,7 @@ def check_excel_length(file_path: Path):
 
 @cli.command("split")
 @click.option('--file_path', '-f', help='File path', required=True)
-@click.option('--max_rows_per_file', '-m', help='Max rows per file', default=100000)
+@click.option('--max_rows_per_file', '-m', help='Max rows per file', default=1000000)
 def split_excel_file(file_path: str, max_rows_per_file: int):
     """
     Split excel file into multiple files which won't exceed row limit
