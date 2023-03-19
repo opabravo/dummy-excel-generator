@@ -12,7 +12,7 @@ This is a tool pack to generate, split and check Excel files with random data.
 
 ## Description
 
-The generated Excel files can be used to test the condition when row count exceed the limit of `1048576`, so it won't be able to open.
+The generated Excel files can be used to test the condition when row count exceed the limit of `1048576`, so it won't be able to open properly.
 
 In our case, we were testing against **OPSWAT**'s CDR (Content Disarm and Reconstruction) technology, which can detect and reconstruct malicious data.
 
