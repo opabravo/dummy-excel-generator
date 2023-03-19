@@ -12,9 +12,9 @@ OUTPUT_DIR = Path(__file__).parent / 'output'
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'], show_default=True)
 
 
-def _split_excel(input_file_path: str, max_rows: int) -> int:
+def _split_excel(input_file_path: Path, max_rows: int) -> int:
     """Split excel file into multiple files"""
-    file_name_prefix = input_file_path.split('.')[0]
+    file_name_prefix = input_file_path.name.split('.')[0]
     file_suffix_num = 0
 
     with open(input_file_path, "r") as input_file:
@@ -107,7 +107,7 @@ def check_excel_length(file_path: Path):
 def split_excel_file(file_path: str, max_rows_per_file: int):
     """Split excel file into multiple files which won't exceed row limit"""
     click.echo(click.style(f"[*] Splitting {file_path} into multiple files", fg='yellow'))
-    files_count = _split_excel(file_path, max_rows_per_file)
+    files_count = _split_excel(Path(file_path), max_rows_per_file)
     click.echo(click.style(f"[+] Done splitting {file_path} into {files_count} files", fg='green'))
     click.echo(click.style(f"[*] Check {OUTPUT_DIR}/ for splitted excel files", fg='yellow'))
 
