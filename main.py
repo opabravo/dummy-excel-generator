@@ -5,7 +5,8 @@ import csv
 import click
 from faker import Faker
 from pathlib import Path
-from typing import IO, Generator
+from itertools import islice
+from typing import Generator, Iterable
 
 OUTPUT_DIR = Path(__file__).parent / 'output'
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'], show_default=True)
@@ -55,11 +56,9 @@ class ExcelSplitter:
 
 
 def generate_random_data(rows: int) -> Generator[dict, None, None]:
-    """
-    Generate random data
-    """
+    """Generate random data"""
     faker = Faker()
-    for _ in range(rows-1):
+    for _ in range(rows):
         yield {
             'file': faker.file_name(),
             'date': faker.date(),
@@ -67,19 +66,32 @@ def generate_random_data(rows: int) -> Generator[dict, None, None]:
 
 
 def gen_excel(file_name: str, rows: int):
-    """
-    Function to generate excel file with random data
-    """
+    """Function to generate excel file with random data"""
     output_path = OUTPUT_DIR / f'{file_name}.csv'
-    click.echo(click.style(f"[*] Generating {output_path} with {rows} rows", fg='yellow'))
+    # Print length of rows+1 because the header rows needs to be counted
+    file_info = f"{output_path} with {rows + 1} rows"
+
+    click.echo(click.style(f"[*] Generating {file_info}", fg='yellow'))
     rnd_data = generate_random_data(rows)
+    _excel_writer(output_path, rnd_data)
+    click.echo(click.style(f"[+] Generated {file_info}", fg='green'))
+
+
+def _excel_writer(output_path: Path, rnd_data: Generator):
+    """Excel writer"""
     with open(output_path, 'w', encoding='utf-8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=['file', 'date'])
         writer.writeheader()
-        for row in rnd_data:
-            writer.writerow(row)
+        # Write 100000 rows at a time
+        for row in _batched(rnd_data, 100000):
+            writer.writerows(row)
 
-    click.echo(click.style(f"[+] Generated {output_path} with {rows} rows", fg='green'))
+
+def _batched(iterable: Iterable, chunk_size: int) -> tuple:
+    """Batched generator"""
+    iterator = iter(iterable)
+    while chunk := tuple(islice(iterator, chunk_size)):
+        yield chunk
 
 
 def get_excel_row_length(file_path: Path) -> int:
@@ -105,10 +117,9 @@ def cli():
 @click.option('--name', '-n', help="A name for the generated excel file. Ex: test", required=True)
 @click.option('--rows', '-r', help='Number of rows', default=2000000)
 def gen(name: str, rows: int):
-    """
-    Generate excel file with random data
-    """
-    gen_excel(name, rows)
+    """Generate excel file with random data"""
+    # Generate length of rows-1 because we have a header row
+    gen_excel(name, rows - 1)
 
 
 @cli.command("check", no_args_is_help=True)
