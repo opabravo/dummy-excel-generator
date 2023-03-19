@@ -2,6 +2,8 @@
 
 This is a tool pack to generate, split and check Excel files with random data.
 
+![](https://i.imgur.com/J7MdeJY.png)
+
 # Features
 
 - [x] Generate Excel files with random data which can exceed the row limit of `1048576`.
