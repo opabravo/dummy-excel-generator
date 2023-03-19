@@ -12,47 +12,22 @@ OUTPUT_DIR = Path(__file__).parent / 'output'
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'], show_default=True)
 
 
-class ExcelSplitter:
-    def __init__(self, input_file_path: str, max_rows: int = 100000):
-        self.input_file_path: str = input_file_path
-        self.max_rows: int = max_rows
-        self.file_handler: IO = None
-        self.writer: csv.writer = None
-        self.row_count = 0
-        self.file_suffix_num = 0
+def _split_excel(input_file_path: str, max_rows: int) -> int:
+    """Split excel file into multiple files"""
+    file_name_prefix = input_file_path.split('.')[0]
+    file_suffix_num = 0
 
-    def __enter__(self):
-        return self
+    with open(input_file_path, "r") as input_file:
+        reader = csv.reader(input_file)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.file_handler.close()
-
-    def split(self):
-        """
-        Split excel file into multiple files
-        """
-        file_name_prefix = self.input_file_path.split('.')[0]
-
-        with open(self.input_file_path, "r") as input_file:
-            reader = csv.reader(input_file)
-            row_count: int = 0
-            file_suffix_num: int = 0
-
-            for row in reader:
-                # If the counter is equal to 0, create a new output file
-                if row_count == 0:
-                    file_suffix_num += 1
-                    output_file_path = OUTPUT_DIR / f"{file_name_prefix}_{file_suffix_num}.csv"
-                    self.file_handler = open(output_file_path, "w", newline='')
-                    self.writer = csv.writer(self.file_handler)
-
-                # If the counter is not equal to 0, write the row to the existing output file
-                self.writer.writerow(row)
-                row_count += 1
-
-                if row_count == self.max_rows:
-                    self.file_handler.close()
-                    row_count = 0
+        # Use batched to split the data into chunks
+        for chunk in _batched(reader, max_rows):
+            file_suffix_num += 1
+            output_file_path = OUTPUT_DIR / f"{file_name_prefix}_{file_suffix_num}.csv"
+            with open(output_file_path, "w", newline='') as output_file:
+                writer = csv.writer(output_file)
+                writer.writerows(chunk)
+    return file_suffix_num
 
 
 def generate_random_data(rows: int) -> Generator[dict, None, None]:
@@ -134,18 +109,13 @@ def check_excel_length(file_path: Path):
 
 @cli.command("split", no_args_is_help=True)
 @click.argument('file_path', type=click.Path(exists=True), required=True)
-@click.option('--max_rows_per_file', help="Maximum rows per file", default=1000000)
+@click.option('--max_rows_per_file', help="Maximum rows per file", default=1048576)
 def split_excel_file(file_path: str, max_rows_per_file: int):
-    """
-    Split excel file into multiple files which won't exceed row limit
-    """
-    splitted_files_count = 0
+    """Split excel file into multiple files which won't exceed row limit"""
     click.echo(click.style(f"[*] Splitting {file_path} into multiple files", fg='yellow'))
-    with ExcelSplitter(file_path, max_rows_per_file) as splitter:
-        splitter.split()
-        splitted_files_count = splitter.file_suffix_num
-    click.echo(click.style(f"[+] Done splitting {file_path} into {splitted_files_count} files", fg='green'))
-    click.echo(click.style(f"[*] Check {OUTPUT_DIR} for splitted excel files", fg='yellow'))
+    files_count = _split_excel(file_path, max_rows_per_file)
+    click.echo(click.style(f"[+] Done splitting {file_path} into {files_count} files", fg='green'))
+    click.echo(click.style(f"[*] Check {OUTPUT_DIR}/ for splitted excel files", fg='yellow'))
 
 
 if __name__ == '__main__':
