@@ -70,9 +70,7 @@ def _batched(iterable: Iterable, chunk_size: int) -> tuple:
 
 
 def get_excel_row_length(file_path: Path) -> int:
-    """
-    Get excel row length
-    """
+    """Get excel row length"""
     with open(file_path, 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
         return sum(1 for _ in reader)
@@ -80,9 +78,7 @@ def get_excel_row_length(file_path: Path) -> int:
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 def cli():
-    """
-    Dummy Excel file generator CLI
-    """
+    """Dummy Excel file generator CLI"""
     # Make sure output folder exists
     if not OUTPUT_DIR.exists():
         OUTPUT_DIR.mkdir()
@@ -100,9 +96,7 @@ def gen(name: str, rows: int):
 @cli.command("check", no_args_is_help=True)
 @click.argument('file_path', type=click.Path(exists=True), required=True)
 def check_excel_length(file_path: Path):
-    """
-    Get excel file's row count
-    """
+    """Get excel file's row count"""
     result = click.style(get_excel_row_length(file_path), fg='yellow')
     click.echo(click.style(f"[*] {file_path} has {result} rows", fg='yellow'))
 
